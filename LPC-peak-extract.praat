@@ -11,13 +11,13 @@
 # Display config form 
 form Save spectral peaks for all labels
 comment Give the path of the directory containing the sound and TextGrid files:
-text directory C:\Users\kyete\OneDrive\Documents\Botch\test4\Analysis\
+text directory ~\Documents\Botch\test4\Analysis\
 comment Which tier of the TextGrid files should be used for segment analysis?
 integer Tier 1
 comment Which interval tier of the TextGrid files should be used for item names?
 integer Item_tier 2
 comment Full path of the resulting text file:
-text resultfile C:\Users\kyete\OneDrive\Documents\Botch\test4\Analysis\Test4LPCEXTRACT.txt
+text resultfile ~\Documents\Botch\test4\Analysis\Test4LPCEXTRACT.txt
 comment Formant analysis options
 integer Max_number_of_formants 5
 positive Maximum_formant_(Hz) 5512.5
