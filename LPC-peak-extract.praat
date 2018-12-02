@@ -11,13 +11,13 @@
 # Display config form 
 form Save spectral peaks for all labels
 comment Give the path of the directory containing the sound and TextGrid files:
-text directory C:\Users\kyete\OneDrive\Documents\Backup\Annie Daniels Collection\spicxw\
+text directory C:\Users\kyete\OneDrive\Documents\Botch\test4\Analysis\
 comment Which tier of the TextGrid files should be used for segment analysis?
-integer Tier 2
+integer Tier 1
 comment Which interval tier of the TextGrid files should be used for item names?
-integer Item_tier 3
+integer Item_tier 2
 comment Full path of the resulting text file:
-text resultfile RSrr.txt
+text resultfile C:\Users\kyete\OneDrive\Documents\Botch\test4\Analysis\Test4LPCEXTRACT.txt
 comment Formant analysis options
 integer Max_number_of_formants 5
 positive Maximum_formant_(Hz) 5512.5
@@ -33,15 +33,13 @@ lineNumber = 0
 
 # Check if the result text file already exists. If it does, ask the user for permission to overwrite it.
 if fileReadable (resultfile$) = 1
-   pause The text file 'resultfile$' already exists. Do you want to continue and overwrite it?
+	pause The text file 'resultfile$' already exists. Do you want to continue and overwrite it?
 filedelete 'resultfile$'
 endif
 # add the column titles to the text file:
 
 titleLine$ ="midpoint	filename$	itemLabel$	itemIntervalNumber	1abel$	duration	spectralPeak1	spectralPeak2	spectralPeak3	segstart	segend	'newline$'"
 fileappend 'resultfile$' 'titleLine$'
-
-
 
 # Check the contents of the user-specified directory and open appropriate Sound and TextGrid pairs:
 Create Strings as file list... list 'directory$'*
@@ -51,51 +49,44 @@ printline The number of files found is 'numberOfFiles'.
 
 #for loop to go through all files in the directory
 for gridfile to numberOfFiles
-   #printline gridfile 'gridfile'
-   select Strings list
-   gridfilename$ = Get string... gridfile
-   #printline gridfilename is 'gridfilename$'
+	#printline gridfile 'gridfile'
+	select Strings list
+	gridfilename$ = Get string... gridfile
+	#printline gridfilename is 'gridfilename$'
 
-   #if statement to get texgrid files
-   if right$ (gridfilename$, 9) = ".textgrid" or right$ (gridfilename$, 9) = ".TextGrid"  or right$ (gridfilename$, 9) = ".TEXTGRID"
-      #printline This is a textgrid (ie, the if statement is yes)
+	#if statement to get texgrid files
+	if right$ (gridfilename$, 9) = ".textgrid" or right$ (gridfilename$, 9) = ".TextGrid"  or right$ (gridfilename$, 9) = ".TEXTGRID"
 
-      #check if there is a corresponding sound file if a textgrid file was found,
-      filename$ = left$ (gridfilename$, (length (gridfilename$) - 9))
-      #printline filename is 'filename$'
-      #for to check for sound files
-      for soundfile to numberOfFiles
-         #printline soundfiles is 'soundfile' and number of files is 'numberOfFiles'
-         soundfilename$ = Get string... soundfile
-         #printline soundfilename is 'soundfilename$' and string is  'soundfile'
-         #if statement to check if the left part of the filename is identical to left part of textgrid and if the extension is wav or aif
-         if left$ (soundfilename$, (length (filename$))) = filename$ and (right$ (soundfilename$, (length (soundfilename$) - length (filename$))) = ".wav" or right$ (soundfilename$, (length (soundfilename$) - length (filename$))) = ".WAV" or right$ (soundfilename$, (length (soundfilename$) - length (filename$))) = ".aif" or right$ (soundfilename$, 5) = ".aiff" or right$ (soundfilename$, (length (soundfilename$) - length (filename$))) = ".AIF" or right$ (soundfilename$, (length (soundfilename$) - length (filename$))) = ".AIFF")
-            printline This is a matching pair 'filename$'
-            # open both files if they match
-            #printline soundfile is 'directory$''soundfilename$' and texgrid file is 'directory$''soundfilename$'
-            Read from file... 'directory$''soundfilename$'
-            Read from file... 'directory$''gridfilename$'
-            filepair = filepair + 1
-            #get times for the segment
+	#check if there is a corresponding sound file if a textgrid file was found,
+	filename$ = left$ (gridfilename$, (length (gridfilename$) - 9))
+	#printline filename is 'filename$'
+		#for to check for sound files
+		for soundfile to numberOfFiles
+			#printline soundfilename is 'soundfilename$' and string is  'soundfile'
+			soundfilename$ = Get string... soundfile
+			#if statement to check if the left part of the filename is identical to left part of textgrid and if the extension is wav or aif
+			if left$ (soundfilename$, (length (filename$))) = filename$ and (right$ (soundfilename$, (length (soundfilename$) - length (filename$))) = ".wav" or right$ (soundfilename$, (length (soundfilename$) - length (filename$))) = ".WAV" or right$ (soundfilename$, (length (soundfilename$) - length (filename$))) = ".aif" or right$ (soundfilename$, 5) = ".aiff" or right$ (soundfilename$, (length (soundfilename$) - length (filename$))) = ".AIF" or right$ (soundfilename$, (length (soundfilename$) - length (filename$))) = ".AIFF")
+				
+				printline This is a matching pair 'filename$'
+				# open both files if they match
+				#printline soundfile is 'directory$''soundfilename$' and texgrid file is 'directory$''soundfilename$'
+				Read from file... 'directory$''soundfilename$'
+				Read from file... 'directory$''gridfilename$'
+				filepair = filepair + 1
+				#get times for the segment
 
-            #extract textgrid information
-            call Measurements
+				#extract textgrid information
+				call Measurements
 
+			select Strings list
 
+			#endif for finding matching sound file
+			endif
+		#endfor to get matching sound files
+		endfor
 
-
-
-
-            select Strings list
-
-         #endif for finding matching sound file
-         endif
-
-      #endfor to get matching sound files
-      endfor
-
-   #endif for finding textgrid files
-   endif
+	#endif for finding textgrid files
+	endif
 
 #endfor to go through all files in a directory
 endfor
@@ -127,17 +118,15 @@ for interval to numberOfIntervals
 	select TextGrid 'filename$'
 	label$ = Get label of interval... tier interval
 
-
-
-	segstart = Get starting point... tier interval
-	segend = Get end point... tier interval
-	midpoint = (segstart + segend)/2
+	if label$ <> ""
+		segstart = Get starting point... tier interval
+		segend = Get end point... tier interval
+		midpoint = (segstart + segend)/2
 
 	# get item label from tier 1
 	itemIntervalNumber = Get interval at time... item_tier segstart
 	itemLabel$ = Get label of interval... item_tier itemIntervalNumber
 
-	
 	duration = segend - segstart
 	# Create a window for analyses (possibly adding the "safety margin"):
 		windowstart = midpoint - 0.02325
@@ -159,14 +148,6 @@ for interval to numberOfIntervals
 	#printline 'resultLine$'
 	fileappend 'resultfile$' 'resultLine$'
 	lineNumber = lineNumber + 1
-	
-	#make uniform Ltas for averaging and making pictures
-	#if labelType = 4 & ( itemContext = 2 or itemContext = 0 or itemContext = 1) & (duration > 0.006)
-	#if labelType = 4 & (duration > 0.006)
-	#	select Sound extractedSegment
-	#	To Ltas... 100
-	#	Rename... 'itemLabel$''label$'
-	#endif
 
 	select Sound extractedSegment
 	plus Spectrum extractedSegment_0_0
@@ -174,8 +155,7 @@ for interval to numberOfIntervals
 	plus LPC extractedSegment
 	Remove
 	
-
-	
+	endif
 endfor
 
 #pause Finished the root 'filename$' Do you want to stop?
